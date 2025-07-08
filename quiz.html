@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher vs Mentor Reflection Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .quiz-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .quiz-subtitle {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .question-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .question-container.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .question-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f1f3ff;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .option-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .option-text {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .results-container {
+            display: none;
+            text-align: center;
+        }
+
+        .results-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .result-message {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .reflection-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .reflection-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .reflection-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .reflection-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .restart-btn {
+            background: #e74c3c;
+            margin-top: 20px;
+        }
+
+        .restart-btn:hover {
+            background: #c0392b;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 25px;
+            }
+
+            .quiz-title {
+                font-size: 2rem;
+            }
+
+            .question-text {
+                font-size: 1.3rem;
+            }
+
+            .option {
+                padding: 15px;
+            }
+
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1 class="quiz-title">Teacher vs Mentor</h1>
+            <p class="quiz-subtitle">Reflect on whether someone in your life has acted as your teacher, mentor, both, or neither</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+
+        <div id="quizForm">
+            <!-- Questions will be dynamically generated here -->
+        </div>
+
+        <div class="navigation">
+            <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>Previous</button>
+            <button class="btn" id="nextBtn" onclick="nextQuestion()">Next</button>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="score-display" id="scoreDisplay"></div>
+            <div class="result-message" id="resultMessage"></div>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Teacher</th>
+                        <th>Mentor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Teaches subjects</td>
+                        <td>Teaches growth, adaptability, success</td>
+                    </tr>
+                    <tr>
+                        <td>Shares knowledge</td>
+                        <td>Shares wisdom & life experience</td>
+                    </tr>
+                    <tr>
+                        <td>Focuses on syllabus</td>
+                        <td>Focuses on <em>you</em></td>
+                    </tr>
+                    <tr>
+                        <td>Gives instructions</td>
+                        <td>Offers perspective</td>
+                    </tr>
+                    <tr>
+                        <td>Teaches what to think</td>
+                        <td>Teaches how to think</td>
+                    </tr>
+                    <tr>
+                        <td>Tracks academic progress</td>
+                        <td>Supports personal & emotional growth</td>
+                    </tr>
+                    <tr>
+                        <td>Stays within class</td>
+                        <td>Is present beyond it</td>
+                    </tr>
+                    <tr>
+                        <td>Corrects mistakes</td>
+                        <td>Helps you grow from them</td>
+                    </tr>
+                    <tr>
+                        <td>Helps you pass</td>
+                        <td>Helps you <em>become</em> someone strong</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="reflection-section">
+                <h3 class="reflection-title">Share Your Reflection</h3>
+                <form id="reflectionForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                    <textarea class="reflection-textarea" name="reflection" id="reflectionText" placeholder="Take a moment to reflect on your experience..." required></textarea>
+                    <input type="hidden" name="score" id="hiddenScore">
+                    <input type="hidden" name="result" id="hiddenResult">
+                    <input type="hidden" name="timestamp" id="hiddenTimestamp">
+                    <button class="btn" type="submit" id="submitReflectionBtn">Submit Reflection</button>
+                </form>
+                <div class="success-message" id="successMessage">
+                    Thank you for reflecting. Your insight matters.
+                </div>
+            </div>
+
+            <button class="btn restart-btn" onclick="restartQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                number: 1,
+                text: "Did I...",
+                options: [
+                    { label: "i.", text: "Just teach you subjects", value: 1 },
+                    { label: "ii.", text: "Teach you how to grow, adapt, and succeed", value: 2 },
+                    { label: "iii.", text: "None", value: 0 },
+                    { label: "iv.", text: "i and ii both", value: 3 }
+                ]
+            },
+            {
+                number: 2,
+                text: "Did I...",
+                options: [
+                    { label: "i.", text: "Share knowledge with you", value: 1 },
+                    { label: "ii.", text: "Share wisdom and life experience", value: 2 },
+                    { label: "iii.", text: "None", value: 0 },
+                    { label: "iv.", text: "i and ii both", value: 3 }
+                ]
+            },
+            {
+                number: 3,
+                text: "Did I...",
+                options: [
+                    { label: "i.", text: "Focus only on the syllabus", value: 1 },
+                    { label: "ii.", text: "Focus on you as a person", value: 2 },
+                    { label: "iii.", text: "None", value: 0 },
+                    { label: "iv.", text: "i and ii both", value: 3 }
+                ]
+            },
+            {
+                number: 4,
+                text: "Did I...",
+                options: [
+                    { label: "i.", text: "Give instructions only", value: 1 },
+                    { label: "ii.", text: "Give you perspective and guidance", value: 2 },
+                    { label: "iii.", text: "None", value: 0 },
+                    { label: "iv.", text: "i and ii both", value: 3 }
+                ]
+            },
+            {
+                number: 5,
+                text: "Did I...",
+                options: [
+                    { label: "i.", text: "Teach you what to think", value: 1 },
+                    { label: "ii.", text: "Teach you how to think", value: 2 },
+                    { label: "iii.", text: "None", value: 0 },
+                    { label: "iv.", text: "i and ii both", value: 3 }
+                ]
+            },
+            {
+                number: 6,
+                text: "Did I...",
+                options: [
+                    { label: "i.", text: "Track your academic performance", value: 1 },
+                    { label: "ii.", text: "Care about your overall growth", value: 2 },
+                    { label: "iii.", text: "None", value: 0 },
+                    { label: "iv.", text: "i and ii both", value: 3 }
+                ]
+            },
+            {
+                number: 7,
+                text: "Did I...",
+                options: [
+                    { label: "i.", text: "Just work within lessons", value: 1 },
+                    { label: "ii.", text: "Stay involved beyond classes", value: 2 },
+                    { label: "iii.", text: "None", value: 0 },
+                    { label: "iv.", text: "i and ii both", value: 3 }
+                ]
+            },
+            {
+                number: 8,
+                text: "Did I...",
+                options: [
+                    { label: "i.", text: "Correct your mistakes", value: 1 },
+                    { label: "ii.", text: "Help you learn from them and grow", value: 2 },
+                    { label: "iii.", text: "None", value: 0 },
+                    { label: "iv.", text: "i and ii both", value: 3 }
+                ]
+            },
+            {
+                number: 9,
+                text: "Did I...",
+                options: [
+                    { label: "i.", text: "Help you pass exams", value: 1 },
+                    { label: "ii.", text: "Help you become someone who doesn't fear them", value: 2 },
+                    { label: "iii.", text: "None", value: 0 },
+                    { label: "iv.", text: "i and ii both", value: 3 }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = {};
+
+        function initializeQuiz() {
+            generateQuestions();
+            showQuestion(0);
+            updateProgress();
+        }
+
+        function generateQuestions() {
+            const quizForm = document.getElementById('quizForm');
+            quizForm.innerHTML = '';
+
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                questionDiv.id = `question-${index}`;
+
+                questionDiv.innerHTML = `
+                    <div class="question-number">Question ${question.number} of ${questions.length}</div>
+                    <div class="question-text">${question.text}</div>
+                    <div class="options">
+                        ${question.options.map((option, optionIndex) => `
+                            <div class="option" onclick="selectOption(${index}, ${optionIndex}, ${option.value})">
+                                <div class="option-label">${option.label}</div>
+                                <div class="option-text">${option.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                quizForm.appendChild(questionDiv);
+            });
+        }
+
+        function showQuestion(index) {
+            // Hide all questions
+            document.querySelectorAll('.question-container').forEach(q => {
+                q.classList.remove('active');
+            });
+
+            // Show current question
+            setTimeout(() => {
+                document.getElementById(`question-${index}`).classList.add('active');
+            }, 100);
+
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = index === 0;
+            
+            if (index === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Finish Quiz';
+                document.getElementById('nextBtn').disabled = !answers.hasOwnProperty(index);
+            } else {
+                document.getElementById('nextBtn').textContent = 'Next';
+                document.getElementById('nextBtn').disabled = !answers.hasOwnProperty(index);
+            }
+
+            // Restore selected option if exists
+            if (answers.hasOwnProperty(index)) {
+                const selectedOption = document.querySelector(`#question-${index} .option:nth-child(${answers[index].optionIndex + 1})`);
+                if (selectedOption) {
+                    selectedOption.classList.add('selected');
+                }
+            }
+        }
+
+        function selectOption(questionIndex, optionIndex, value) {
+            // Remove previous selection
+            document.querySelectorAll(`#question-${questionIndex} .option`).forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Add selection to clicked option
+            event.target.closest('.option').classList.add('selected');
+
+            // Store answer
+            answers[questionIndex] = { optionIndex, value };
+
+            // Enable next button
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+                updateProgress();
+            } else {
+                // Finish quiz
+                calculateResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+                updateProgress();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function calculateResults() {
+            const totalScore = Object.values(answers).reduce((sum, answer) => sum + answer.value, 0);
+            
+            let resultMessage;
+            if (totalScore >= 0 && totalScore <= 4) {
+                resultMessage = "Neither";
+            } else if (totalScore >= 5 && totalScore <= 10) {
+                resultMessage = "Teacher";
+            } else if (totalScore >= 11 && totalScore <= 17) {
+                resultMessage = "Mentor";
+            } else if (totalScore >= 18 && totalScore <= 24) {
+                resultMessage = "Both Mentor and Teacher";
+            } else if (totalScore >= 25 && totalScore <= 27) {
+                resultMessage = "Strong Mentor with Teacher qualities";
+            }
+
+            // Store results in localStorage for persistence
+            const quizResults = {
+                score: totalScore,
+                result: resultMessage,
+                timestamp: new Date().toISOString(),
+                completed: true
+            };
+            localStorage.setItem('teacherMentorQuizResults', JSON.stringify(quizResults));
+
+            // Hide quiz form and navigation
+            document.getElementById('quizForm').style.display = 'none';
+            document.querySelector('.navigation').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'none';
+
+            // Show results
+            document.getElementById('scoreDisplay').textContent = `${totalScore}/27`;
+            document.getElementById('resultMessage').textContent = resultMessage;
+            
+            // Populate hidden form fields
+            document.getElementById('hiddenScore').value = totalScore;
+            document.getElementById('hiddenResult').value = resultMessage;
+            document.getElementById('hiddenTimestamp').value = new Date().toISOString();
+            
+            document.getElementById('resultsContainer').classList.add('active');
+        }
+
+        function submitReflection() {
+            // This is now handled by the form submission
+            // The form will automatically submit to Formspree
+        }
+
+        // Handle form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeQuiz();
+            
+            // Check if quiz was previously completed
+            const savedResults = localStorage.getItem('teacherMentorQuizResults');
+            if (savedResults) {
+                const results = JSON.parse(savedResults);
+                if (results.completed) {
+                    // Show option to retake or view results
+                    showPreviousResults(results);
+                }
+            }
+            
+            // Handle reflection form submission
+            const form = document.getElementById('reflectionForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Submit to Formspree
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        document.getElementById('successMessage').style.display = 'block';
+                        document.getElementById('reflectionText').value = '';
+                        
+                        // Hide success message after 3 seconds
+                        setTimeout(() => {
+                            document.getElementById('successMessage').style.display = 'none';
+                        }, 3000);
+                    } else {
+                        alert('There was a problem submitting your reflection. Please try again.');
+                    }
+                }).catch(error => {
+                    alert('There was a problem submitting your reflection. Please try again.');
+                });
+            });
+        });
+
+        function showPreviousResults(results) {
+            // Add a banner showing previous completion
+            const banner = document.createElement('div');
+            banner.style.cssText = `
+                background: #e8f5e8;
+                border: 1px solid #4caf50;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                text-align: center;
+            `;
+            banner.innerHTML = `
+                <p><strong>You completed this quiz on ${new Date(results.timestamp).toLocaleDateString()}</strong></p>
+                <p>Your result: ${results.result} (${results.score}/27)</p>
+                <button class="btn btn-secondary" onclick="viewPreviousResults('${results.result}', ${results.score})" style="margin-right: 10px;">View Results</button>
+                <button class="btn" onclick="retakeQuiz()">Retake Quiz</button>
+            `;
+            
+            document.querySelector('.quiz-container').insertBefore(banner, document.querySelector('.quiz-header').nextSibling);
+        }
+
+        function viewPreviousResults(resultMessage, score) {
+            // Show the results directly
+            document.getElementById('quizForm').style.display = 'none';
+            document.querySelector('.navigation').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'none';
+            
+            document.getElementById('scoreDisplay').textContent = `${score}/27`;
+            document.getElementById('resultMessage').textContent = resultMessage;
+            document.getElementById('resultsContainer').classList.add('active');
+        }
+
+        function retakeQuiz() {
+            // Clear saved results
+            localStorage.removeItem('teacherMentorQuizResults');
+            
+            // Remove banner
+            const banner = document.querySelector('.quiz-container > div[style*="background: #e8f5e8"]');
+            if (banner) {
+                banner.remove();
+            }
+            
+            // Reset quiz
+            restartQuiz();
+        }
+
+        function restartQuiz() {
+            // Reset all variables
+            currentQuestion = 0;
+            answers = {};
+            
+            // Hide results
+            document.getElementById('resultsContainer').classList.remove('active');
+            
+            // Show quiz elements
+            document.getElementById('quizForm').style.display = 'block';
+            document.querySelector('.navigation').style.display = 'flex';
+            document.querySelector('.progress-bar').style.display = 'block';
+            
+            // Reset and show first question
+            showQuestion(0);
+            updateProgress();
+            
+            // Clear any success messages
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('reflectionText').value = '';
+        }
+
+        // Initialize the quiz when the page loads
+        // (This is now handled in the DOMContentLoaded event listener above)
+    </script>
+</body>
+</html>
