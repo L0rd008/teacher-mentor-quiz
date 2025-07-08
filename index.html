@@ -150,12 +150,14 @@
         .btn:hover {
             background: #5a6fd8;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .btn:disabled {
             background: #bdc3c7;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .btn-secondary {
@@ -189,10 +191,17 @@
         }
 
         .result-message {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 600;
             color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .result-subtitle {
+            font-size: 1.1rem;
+            color: #7f8c8d;
             margin-bottom: 30px;
+            font-style: italic;
         }
 
         .comparison-table {
@@ -301,8 +310,8 @@
 <body>
     <div class="quiz-container">
         <div class="quiz-header">
-            <h1 class="quiz-title">Teacher vs Mentor</h1>
-            <p class="quiz-subtitle">Reflect on whether someone in your life has acted as your teacher, mentor, both, or neither</p>
+            <h1 class="quiz-title">A Little Reflection Together 💭</h1>
+            <p class="quiz-subtitle">Hey there! I've been thinking about our journey together, and I'd love for you to take a moment to reflect with me. There's no right or wrong answer - just whatever feels true to your heart. This is about understanding the beautiful connection we've shared. ✨</p>
         </div>
 
         <div class="progress-bar">
@@ -321,6 +330,7 @@
         <div class="results-container" id="resultsContainer">
             <div class="score-display" id="scoreDisplay"></div>
             <div class="result-message" id="resultMessage"></div>
+            <div class="result-subtitle">Here's what our journey together has looked like... 💙</div>
             
             <table class="comparison-table">
                 <thead>
@@ -370,20 +380,21 @@
             </table>
 
             <div class="reflection-section">
-                <h3 class="reflection-title">Share Your Reflection</h3>
+                <h3 class="reflection-title">Your Heart's Reflection 💝</h3>
+                <p style="color: #666; margin-bottom: 15px; font-style: italic;">If you'd like, share what's on your mind. Your words mean the world to me, but only if you feel comfortable sharing. There's no pressure at all - just know that I'm here, listening with care.</p>
                 <form id="reflectionForm" action="https://formspree.io/f/mblyvpjw" method="POST">
-                    <textarea class="reflection-textarea" name="reflection" id="reflectionText" placeholder="Take a moment to reflect on your experience..." required></textarea>
+                    <textarea class="reflection-textarea" name="reflection" id="reflectionText" placeholder="Whatever you're feeling... your thoughts, memories, or just a simple hello. I'm grateful for whatever you'd like to share. 💙" required></textarea>
                     <input type="hidden" name="score" id="hiddenScore">
                     <input type="hidden" name="result" id="hiddenResult">
                     <input type="hidden" name="timestamp" id="hiddenTimestamp">
-                    <button class="btn" type="submit" id="submitReflectionBtn">Submit Reflection</button>
+                    <button class="btn" type="submit" id="submitReflectionBtn">Share Your Thoughts 💌</button>
                 </form>
                 <div class="success-message" id="successMessage">
-                    Thank you for reflecting. Your insight matters.
+                    Your words have reached me. Thank you for sharing a piece of your heart. 💙
                 </div>
             </div>
 
-            <button class="btn restart-btn" onclick="restartQuiz()">Restart Quiz</button>
+            <button class="btn restart-btn" onclick="restartQuiz()">Take This Journey Again 🔄</button>
         </div>
     </div>
 
@@ -391,92 +402,92 @@
         const questions = [
             {
                 number: 1,
-                text: "Did I...",
+                text: "In our time together, have I...",
                 options: [
-                    { label: "i.", text: "Just teach you subjects", value: 1 },
-                    { label: "ii.", text: "Teach you how to grow, adapt, and succeed", value: 2 },
-                    { label: "iii.", text: "None", value: 0 },
-                    { label: "iv.", text: "i and ii both", value: 3 }
+                    { label: "i.", text: "Focused mainly on helping you with subjects and academics", value: 1 },
+                    { label: "ii.", text: "Helped you grow as a person, adapt to challenges, and find your strength", value: 2 },
+                    { label: "iii.", text: "Honestly, neither really resonates with me", value: 0 },
+                    { label: "iv.", text: "Both - you've been there for my studies AND my personal growth", value: 3 }
                 ]
             },
             {
                 number: 2,
-                text: "Did I...",
+                text: "When we've talked, have I...",
                 options: [
-                    { label: "i.", text: "Share knowledge with you", value: 1 },
-                    { label: "ii.", text: "Share wisdom and life experience", value: 2 },
-                    { label: "iii.", text: "None", value: 0 },
-                    { label: "iv.", text: "i and ii both", value: 3 }
+                    { label: "i.", text: "Shared knowledge and information with you", value: 1 },
+                    { label: "ii.", text: "Shared deeper wisdom and life experiences", value: 2 },
+                    { label: "iii.", text: "I'm not sure this fits our conversations", value: 0 },
+                    { label: "iv.", text: "Both - you've shared knowledge AND wisdom from your heart", value: 3 }
                 ]
             },
             {
                 number: 3,
-                text: "Did I...",
+                text: "In our interactions, have I...",
                 options: [
-                    { label: "i.", text: "Focus only on the syllabus", value: 1 },
-                    { label: "ii.", text: "Focus on you as a person", value: 2 },
-                    { label: "iii.", text: "None", value: 0 },
-                    { label: "iv.", text: "i and ii both", value: 3 }
+                    { label: "i.", text: "Focused mainly on academic topics and coursework", value: 1 },
+                    { label: "ii.", text: "Focused on understanding you as a person - your dreams, fears, and hopes", value: 2 },
+                    { label: "iii.", text: "Neither feels quite right for our connection", value: 0 },
+                    { label: "iv.", text: "Both - you've cared about my studies AND who I am as a person", value: 3 }
                 ]
             },
             {
                 number: 4,
-                text: "Did I...",
+                text: "When guiding me, have I...",
                 options: [
-                    { label: "i.", text: "Give instructions only", value: 1 },
-                    { label: "ii.", text: "Give you perspective and guidance", value: 2 },
-                    { label: "iii.", text: "None", value: 0 },
-                    { label: "iv.", text: "i and ii both", value: 3 }
+                    { label: "i.", text: "Given clear instructions and directions", value: 1 },
+                    { label: "ii.", text: "Offered perspective and helped me see things differently", value: 2 },
+                    { label: "iii.", text: "This doesn't describe our dynamic", value: 0 },
+                    { label: "iv.", text: "Both - you've given guidance AND opened my eyes to new perspectives", value: 3 }
                 ]
             },
             {
                 number: 5,
-                text: "Did I...",
+                text: "In our conversations, have I...",
                 options: [
-                    { label: "i.", text: "Teach you what to think", value: 1 },
-                    { label: "ii.", text: "Teach you how to think", value: 2 },
-                    { label: "iii.", text: "None", value: 0 },
-                    { label: "iv.", text: "i and ii both", value: 3 }
+                    { label: "i.", text: "Taught you specific things and what to think about topics", value: 1 },
+                    { label: "ii.", text: "Encouraged you to think critically and form your own opinions", value: 2 },
+                    { label: "iii.", text: "Neither captures what we've shared", value: 0 },
+                    { label: "iv.", text: "Both - you've taught me things AND helped me learn how to think for myself", value: 3 }
                 ]
             },
             {
                 number: 6,
-                text: "Did I...",
+                text: "When it comes to my progress, have I...",
                 options: [
-                    { label: "i.", text: "Track your academic performance", value: 1 },
-                    { label: "ii.", text: "Care about your overall growth", value: 2 },
-                    { label: "iii.", text: "None", value: 0 },
-                    { label: "iv.", text: "i and ii both", value: 3 }
+                    { label: "i.", text: "Kept track of your academic performance and achievements", value: 1 },
+                    { label: "ii.", text: "Cared deeply about your overall well-being and personal growth", value: 2 },
+                    { label: "iii.", text: "Neither feels like what you've done", value: 0 },
+                    { label: "iv.", text: "Both - you've supported my studies AND cared about my happiness", value: 3 }
                 ]
             },
             {
                 number: 7,
-                text: "Did I...",
+                text: "In our relationship, have I...",
                 options: [
-                    { label: "i.", text: "Just work within lessons", value: 1 },
-                    { label: "ii.", text: "Stay involved beyond classes", value: 2 },
-                    { label: "iii.", text: "None", value: 0 },
-                    { label: "iv.", text: "i and ii both", value: 3 }
+                    { label: "i.", text: "Been present mainly during study sessions and academic work", value: 1 },
+                    { label: "ii.", text: "Been there for you beyond just academic times - in life moments", value: 2 },
+                    { label: "iii.", text: "Neither describes our connection", value: 0 },
+                    { label: "iv.", text: "Both - you've helped with studies AND been there through everything", value: 3 }
                 ]
             },
             {
                 number: 8,
-                text: "Did I...",
+                text: "When you've made mistakes, have I...",
                 options: [
-                    { label: "i.", text: "Correct your mistakes", value: 1 },
-                    { label: "ii.", text: "Help you learn from them and grow", value: 2 },
-                    { label: "iii.", text: "None", value: 0 },
-                    { label: "iv.", text: "i and ii both", value: 3 }
+                    { label: "i.", text: "Corrected them and helped you get the right answers", value: 1 },
+                    { label: "ii.", text: "Helped you learn from them and grow stronger as a person", value: 2 },
+                    { label: "iii.", text: "This doesn't reflect how you've responded", value: 0 },
+                    { label: "iv.", text: "Both - you've helped me fix mistakes AND grow from them", value: 3 }
                 ]
             },
             {
                 number: 9,
-                text: "Did I...",
+                text: "Overall, have I...",
                 options: [
-                    { label: "i.", text: "Help you pass exams", value: 1 },
-                    { label: "ii.", text: "Help you become someone who doesn't fear them", value: 2 },
-                    { label: "iii.", text: "None", value: 0 },
-                    { label: "iv.", text: "i and ii both", value: 3 }
+                    { label: "i.", text: "Helped you succeed in exams and academic goals", value: 1 },
+                    { label: "ii.", text: "Helped you become someone who feels confident and unafraid", value: 2 },
+                    { label: "iii.", text: "Neither captures what you've meant to me", value: 0 },
+                    { label: "iv.", text: "Both - you've helped me achieve AND helped me become fearless", value: 3 }
                 ]
             }
         ];
@@ -529,12 +540,13 @@
 
             // Update navigation buttons
             document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('prevBtn').textContent = index === 0 ? 'Previous' : '← Previous';
             
             if (index === questions.length - 1) {
-                document.getElementById('nextBtn').textContent = 'Finish Quiz';
+                document.getElementById('nextBtn').textContent = 'See My Results ✨';
                 document.getElementById('nextBtn').disabled = !answers.hasOwnProperty(index);
             } else {
-                document.getElementById('nextBtn').textContent = 'Next';
+                document.getElementById('nextBtn').textContent = 'Next →';
                 document.getElementById('nextBtn').disabled = !answers.hasOwnProperty(index);
             }
 
@@ -592,15 +604,15 @@
             
             let resultMessage;
             if (totalScore >= 0 && totalScore <= 4) {
-                resultMessage = "Neither";
+                resultMessage = "We're still finding our rhythm together 🌱";
             } else if (totalScore >= 5 && totalScore <= 10) {
-                resultMessage = "Teacher";
+                resultMessage = "I've been your teacher 📚";
             } else if (totalScore >= 11 && totalScore <= 17) {
-                resultMessage = "Mentor";
+                resultMessage = "I've been your mentor 🌟";
             } else if (totalScore >= 18 && totalScore <= 24) {
-                resultMessage = "Both Mentor and Teacher";
+                resultMessage = "I've been both your mentor and teacher 💫";
             } else if (totalScore >= 25 && totalScore <= 27) {
-                resultMessage = "Strong Mentor with Teacher qualities";
+                resultMessage = "I've been your mentor with teaching moments 🦋";
             }
 
             // Store results in localStorage for persistence
